@@ -58,7 +58,7 @@ function SignupForm() {
 
     // Reset
     setFormData({
-      firstName: "",
+      firstName: "", 
       lastName: "",
       email: "",
       password: "",
