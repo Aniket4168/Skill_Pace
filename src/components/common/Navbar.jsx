@@ -1,23 +1,22 @@
 // import { useEffect, useState } from "react"
 // import { AiOutlineMenu, AiOutlineShoppingCart } from "react-icons/ai"
 // import { BsChevronDown } from "react-icons/bs"
-// import { useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { Link, matchPath, useLocation } from "react-router-dom"
 
 import logo from "../../assets/Logo/Logo-Full-Light.png"
 import { NavbarLinks } from "../../data/navbar-links"
+import { AiOutlineShoppingCart } from "react-icons/ai";
 //import { apiConnector } from "../../services/apiconnector"
 //import { categories } from "../../services/apis"
 // import { ACCOUNT_TYPE } from "../../utils/constants"
-// import ProfileDropdown from "../core/Auth/ProfileDropDown"
+import ProfileDropDown from "../core/Auth/ProfileDropDown"
 
 function Navbar() {
-  // const { token } = useSelector((state) => state.auth)
-  // const { user } = useSelector((state) => state.profile)
-  // const { totalItems } = useSelector((state) => state.cart)
-  const location = useLocation()
-
-
+  const { token } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.profile);
+  const { totalItems } = useSelector((state) => state.cart);
+  const location = useLocation() ;
 
   // console.log("sub links", subLinks)
 
@@ -62,6 +61,45 @@ function Navbar() {
         </nav>
         {/* Login / Signup / Dashboard */}
         <div className="flex gap-x-4 items-center">
+
+          {
+            user && user?.accountType !== "Instructor" && (
+              <Link to="/dashboard/cart" className="relative">
+                <AiOutlineShoppingCart/>
+                {
+                  totalItems> 0 && (
+                    <span>
+                      {totalItems}
+                    </span>
+                  )
+                }
+              </Link>
+            )
+          }
+          {
+            token === null && (
+              <Link to="/login">
+                <button className="border border-richblack-700 bg-richblack-800 px-[12px] py-[8px]
+                        text-richblack-100 rounded-md">
+                  Log in
+                </button>
+              </Link>
+            )
+          }
+          {
+            token === null && (
+              <Link to="/signup">
+                <button className="border border-richblack-700 bg-richblack-800 px-[12px] py-[8px]
+                        text-richblack-100 rounded-md">
+                  Sign Up
+                </button>
+              </Link>
+            )
+          }
+          {
+            token !== null && <ProfileDropDown/>
+          }
+
 
         </div>
       
