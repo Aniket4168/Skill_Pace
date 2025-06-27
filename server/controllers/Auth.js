@@ -302,25 +302,16 @@ exports.changePassword = async (req, res) => {
 
         //update pass in db
         const user = User.findOne({email:email});
-        if(await bcrypt.compare( oldPassword, user.password)) {
+        
 
-            //hash the password
-            const hashedNewPass = await bcrypt.hash(newPassword, 10);
+        //hash the password
+        const hashedNewPass = await bcrypt.hash(newPassword, 10);
+        //update password in db
+        const updatedPass = User.findOneAndUpdate({email:email}, 
+                                            {password:hashedNewPass},
+                                            {new:true}
+        )
 
-            //update password in db
-            const updatedPass = User.findOneAndUpdate({email:email}, 
-                                                {password:hashedNewPass},
-                                                {new:true}
-            )
-        }
-
-        //wrong pass
-        else {
-            return res.status(403).json({
-                success:false,
-                message:"Entered password is incorrect, please check it and try again"
-            })
-        }
         
         //send mail- pass updated
         await mailSender(email, "StudyNotion - Password Updated", 
