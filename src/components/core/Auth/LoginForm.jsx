@@ -3,11 +3,11 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"
 import { useDispatch } from "react-redux"
 import { Link, useNavigate } from "react-router-dom"
 
-import { login } from "../../../services/operations/authAPI"
+//import { login } from "../../../services/operations/authAPI"
 
 function LoginForm() {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  // const navigate = useNavigate()
+  // const dispatch = useDispatch()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -24,14 +24,14 @@ function LoginForm() {
     }))
   }
 
-  const handleOnSubmit = (e) => {
-    e.preventDefault()
-    dispatch(login(email, password, navigate))
-  }
+  // const handleOnSubmit = (e) => {
+  //   e.preventDefault()
+  //   dispatch(login(email, password, navigate))
+  // }
 
   return (
     <form
-      onSubmit={handleOnSubmit}
+      // onSubmit={handleOnSubmit}
       className="mt-6 flex w-full flex-col gap-y-4"
     >
       <label className="w-full">
