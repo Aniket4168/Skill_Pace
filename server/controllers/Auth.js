@@ -38,7 +38,7 @@ exports.sendOTP = async (req, res) => {
         console.log("OTP generated: ", otp);
 
         //check unique otp or not
-        const result = await OTP.findOne({otp:otp}); // check if OTP ke schema me otp wale object ki value == abhi jo otp aaya
+        let result = await OTP.findOne({otp:otp}); // check if OTP ke schema me otp wale object ki value == abhi jo otp aaya
         
         //using this we make sure that the otp generated must be unique
         while(result) {
