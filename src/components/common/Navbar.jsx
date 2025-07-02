@@ -35,6 +35,7 @@ function Navbar() {
         try{
           const result = await apiConnector("GET", categories.CATEGORIES_API);
           console.log("printing subLinks result: ", result);
+          console.log(new Date());
           
           setSubLinks(result.data.data);
 
@@ -119,7 +120,7 @@ function Navbar() {
         <div className="flex gap-x-4 items-center">
 
           {
-            user && user?.accountType !== "Instructor" && (
+            token && user && user?.accountType !== "Instructor" && (
               <Link to="/dashboard/cart" className="relative">
                 <AiOutlineShoppingCart/>
                 {
