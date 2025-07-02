@@ -1,11 +1,23 @@
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom';
+import { getPasswordResetToken } from '../services/operations/authApi';
+
+
 const ForgotPassword = () => {
+    
 
     const {loading}= useSelector((state)=>state.auth)
         const [emailSent, setEmailSent] = useState(false)
         const [email, setemail] = useState("");
+        const dispatch = useDispatch();
+        
+ 
+        const handleOnSubmit = (e) => {
+            e.preventDefault();
+            dispatch(getPasswordResetToken(email, setEmailSent));
+        }
+
       return (
         <div className='grid min-h-[calc(100vh-3.5rem)] place-items-center'>
                 {
@@ -15,7 +27,7 @@ const ForgotPassword = () => {
 
                             <h1 className='text-[1.875rem] font-semibold leading-[2.375rem] text-richblack-5'>
                                 {
-                                    !emailSent?("Reset your password"):"Check email"
+                                    !emailSent?("Reset your password"):"Check your email"
                                 }
                             </h1>
 
@@ -26,7 +38,7 @@ const ForgotPassword = () => {
                                 }
                             </p>
 
-                            <form>
+                            <form onSubmit={handleOnSubmit}>
                                 {
                                     !emailSent && (
                                         <label class="w-full"><p class="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
@@ -35,7 +47,7 @@ const ForgotPassword = () => {
                                                 required
                                                 type="email" 
                                                 name="email" 
-                                                placeholder="Enter email address" 
+                                                placeholder="Enter your email address" 
                                                 value={email} 
                                                 onChange={(e)=>setemail(e.target.value)} 
                                                 className="rounded-lg bg-richblack-700 p-3 text-[16px] leading-[24px] text-richblack-5 shadow-[0_1px_0_0] shadow-white/50 placeholder:text-richblack-400 focus:outline-none w-full">
@@ -45,7 +57,7 @@ const ForgotPassword = () => {
                                     )
                                 }
                                 <button type='submit' className='mt-6 w-full rounded-[8px] bg-yellow-50 py-[12px] px-[12px] font-medium text-richblack-900'>
-                                    {!emailSent?("Reset Password"):("Resend email")}
+                                    {!emailSent? ("Reset Password"):("Resend email")}
                                 </button>
                             </form> 
 
