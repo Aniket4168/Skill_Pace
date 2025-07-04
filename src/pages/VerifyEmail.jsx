@@ -96,7 +96,7 @@ function VerifyEmail() {
               onClick={() => dispatch(sendOtp(signupData.email))}
             >
               <RxCountdownTimer />
-              Resend it
+              Resend OTP
             </button>
           </div>
         </div>
