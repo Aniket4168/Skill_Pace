@@ -8,6 +8,8 @@ import SignUp from "./pages/SignUp"
 import ForgotPassword from './pages/ForgotPassword';
 import UpdatePassword from './pages/UpdatePassword';
 import VerifyEmail from './pages/VerifyEmail';
+import About from './pages/About';
+
 
 const App = () => {
   return (
@@ -20,6 +22,7 @@ const App = () => {
           <Route path = "/forgot-password" element = {<ForgotPassword/>}/>
           <Route path = "update-password/:id" element = {<UpdatePassword/>}/>
           <Route path = "verify-email" element = {<VerifyEmail/>}/>
+          <Route path = "about" element = {<About/>}/>
           
       </Routes>
       
