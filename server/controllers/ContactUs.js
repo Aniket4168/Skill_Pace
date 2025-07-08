@@ -8,10 +8,10 @@ require("dotenv").config();
 exports.contactUs = async (req, res) => {
     try{
         //fetch data
-            const {firstName, lastName, email, phoneNo, message} = req.body;
+            const {firstName, lastName="", email, phoneNo, message} = req.body;
 
         //validate the data
-            if(!firstName || !lastName || !email || !phoneNo || !message) {
+            if(!firstName || !email || !phoneNo || !message) {
                 return res.status(400).json({
                     success:false,
                     message:"All fields are mandaatory to fill",
