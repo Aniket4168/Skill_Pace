@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
+import {apiConnector} from "../../../services/apiconnector"
+import {contactusEndpoint} from "../../../services/apis"
+import CountryCode from "../../../data/countrycode.json"
+
+
 const ContactUsForm = () => {
 
   const [loading, setLoading] = useState(false);
@@ -12,7 +17,19 @@ const ContactUsForm = () => {
   } = useForm();
 
   const submitContactForm = async(data) => {
-
+      console.log("Logging Data", data);
+      try{
+        setLoading(true);
+        const response = await apiConnector("POST", contactusEndpoint.CONTACT_US_API, data);
+        // const response = {status: "OK"};
+        console.log("Logging response: ", response);
+        setLoading(false);        
+      }
+      catch(error){
+        console.log("Error ", error.message);
+        setLoading(false);
+      }
+      
   }
 
   useEffect( () => {
@@ -43,7 +60,7 @@ const ContactUsForm = () => {
             id="firstname"
             placeholder="Enter first name"
             className="form-style"
-            {...register("firstname", { required: true })}
+            {...register("firstName", { required: true })}
           />
           {errors.firstname && (
             <span className="-mt-1 text-[12px] text-yellow-100">
@@ -63,7 +80,7 @@ const ContactUsForm = () => {
             id="lastname"
             placeholder="Enter last name"
             className="form-style"
-            {...register("lastname")}
+            {...register("lastName")}
           />
         </div>
         </div>
@@ -88,6 +105,56 @@ const ContactUsForm = () => {
           )}
         </div>
 
+          {/* phone Number */}
+        <div className="flex flex-col gap-2">
+        <label htmlFor="phonenumber" className="lable-style">
+          Phone Number
+        </label>
+
+        <div className="flex gap-5">
+          <div className="flex w-[81px] flex-col gap-2">
+            <select
+              type="text"
+              name="firstname"
+              id="firstname"
+              placeholder="Enter first name"
+              className="form-style"
+              {...register("countrycode", { required: true })}
+            >
+              {CountryCode.map((ele, i) => {
+                return (
+                  <option key={i} value={ele.code}>
+                    {ele.code} -{ele.country}
+                  </option>
+                )
+              })}
+            </select>
+          </div>
+          <div className="flex w-[calc(100%-90px)] flex-col gap-2">
+            <input
+              type="number"
+              name="phonenumber"
+              id="phonenumber"
+              placeholder="12345 67890"
+              className="form-style"
+              {...register("phoneNo", {
+                required: {
+                  value: true,
+                  message: "Please enter your Phone Number.",
+                },
+                maxLength: { value: 12, message: "Error: Invalid Phone Number" },
+                minLength: { value: 10, message: "Error: Invalid Phone Number" },
+              })}
+            />
+          </div>
+        </div>
+        {errors.phoneNo && (
+          <span className="-mt-1 text-[12px] text-yellow-25">
+            {errors.phoneNo.message}
+          </span>
+        )}
+      </div>
+        
 
         {/* message */}
         <div className="flex flex-col gap-2">
