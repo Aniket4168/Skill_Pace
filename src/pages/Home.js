@@ -53,7 +53,7 @@ const Home = () => {
             </div>
 
             <div className='shadow-blue-200 mx-3 mt-12 my-12 w-[70%] relative shadow-[10px_-5px_50px_-5px] '>
-                <div className='grad2 -top-10 w-[800px]'></div>
+                <div className=' -top-10 w-[800px]'></div>
                 <video className='shadow-[20px_20px_rgba(255,255,255)]'
                     muted
                     loop
