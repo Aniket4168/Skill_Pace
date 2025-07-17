@@ -37,7 +37,9 @@ function Navbar() {
           console.log("printing subLinks result: ", result);
           console.log(new Date());
           
-          setSubLinks(result.data.data);
+          setSubLinks(result.data.allCategory);
+          console.log("sublinks: ", result.data.allCategory);
+          
 
         } catch(error) {
           console.log("can not fetch the category list");
@@ -90,7 +92,7 @@ function Navbar() {
                           
                             subLinks.map((subLink, index) => (
                               <Link to={`${subLink.link}`} key={index}>
-                                <p>{subLink.title}</p>
+                                <p>{subLink.name}</p>
                               </Link>
                             ))
                           
