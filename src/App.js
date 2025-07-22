@@ -10,6 +10,8 @@ import UpdatePassword from './pages/UpdatePassword';
 import VerifyEmail from './pages/VerifyEmail';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import Dashboard from './pages/Dashboard';
+import MyProfile from './components/core/Dashboard/MyProfile';
 
 
 const App = () => {
@@ -25,6 +27,14 @@ const App = () => {
           <Route path = "verify-email" element = {<VerifyEmail/>}/>
           <Route path = "about" element = {<About/>}/>
           <Route path = "contact" element = {<Contact/>}/>
+
+          <Route
+            element={
+              <Dashboard/>
+            }
+            >
+          <Route path = "/dashboard/my-profile" element = {<MyProfile/>}/>
+            </Route>
           
       </Routes>
       
