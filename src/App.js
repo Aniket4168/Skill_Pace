@@ -12,7 +12,8 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard';
 import MyProfile from './components/core/Dashboard/MyProfile';
-
+// import Index from './components/core/Dashboard/Settings/index';
+import Settings from './components/core/Dashboard/Settings';
 
 const App = () => {
   return (
@@ -33,8 +34,10 @@ const App = () => {
               <Dashboard/>
             }
             >
-          <Route path = "/dashboard/my-profile" element = {<MyProfile/>}/>
-            </Route>
+            <Route path = "/dashboard/my-profile" element = {<MyProfile/>}/>
+            <Route path = "/dashboard/settings" element = {<Settings/>}/>
+          </Route>
+          
           
       </Routes>
       
