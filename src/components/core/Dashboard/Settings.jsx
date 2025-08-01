@@ -6,6 +6,7 @@ import {AiOutlineEyeInvisible} from 'react-icons/ai'
 import {AiOutlineEye} from 'react-icons/ai'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 
 
 
@@ -20,13 +21,23 @@ const Settings = () => {
   const pfp=useSelector(state=>state.profile.user?.image);
   const [profilePicture, setprofilePicture] = useState(pfp)
   const token= useSelector(state=>state.auth.token);
-
+  // console.log("tokennnn:   ",token);
+  
 
   const handleUpload = (e) => {
-    e.preventDefault();
-    const file = e.target[0].files[0];
-    updatePfp(token,file);
+    console.log("handle upload called");
+  e.preventDefault();
+  const fileInput = document.getElementById('upload');
+  const file = fileInput.files[0];
+  
+  if (!file) {
+    toast.error("Please select a file first");
+    return;
   }
+
+  updatePfp(token, file);
+};
+
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -131,7 +142,7 @@ const Settings = () => {
         
 
          {/* update additional info */}
-        <form onSubmit={handelAdditionalDetails}>
+        {/* <form onSubmit={handelAdditionalDetails}>
         <div className="my-10 flex flex-col gap-y-6 rounded-md border-[1px] border-richblack-700 bg-richblack-800 p-8 px-12">
           <h2 className="text-lg font-semibold text-richblack-5">Profile Information</h2>
           <div className="flex flex-col gap-5 lg:flex-row">
@@ -172,12 +183,12 @@ const Settings = () => {
               </div>
           </div>
           <div className="flex justify-end gap-2"><button className="flex items-center bg-yellow-50 cursor-pointer gap-x-2 rounded-md py-2 px-5 font-semibold text-richblack-900 undefined" type="submit">Save</button></div>
-          </form>
+          </form> */}
 
 
 
              {/* update Password */}
-          <form onSubmit={handlePassword}>
+          {/* <form onSubmit={handlePassword}>
           <div >
                                 <div className=' relative mt-4'>
                                     <label className="w-full"><p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">Old Password <sup className="text-pink-200">*</sup></p>
@@ -256,7 +267,7 @@ const Settings = () => {
                                 </div>
                                 </div>
                                 <div className="flex justify-end gap-2 mt-3"><button className="flex items-center bg-yellow-50 cursor-pointer gap-x-2 rounded-md py-2 px-5 font-semibold text-richblack-900 undefined" type="submit">Save</button></div>
-                                </form>
+                                </form> */}
 
 
 
@@ -264,7 +275,7 @@ const Settings = () => {
 
 
            {/* Delete Account */}
-          <div className="my-10 flex flex-row gap-x-5 rounded-md border-[1px] border-pink-700 bg-pink-900 p-3 md:p-8 md:px-12"><div className="flex aspect-square h-14 w-14 items-center justify-center rounded-full bg-pink-700">
+          {/* <div className="my-10 flex flex-row gap-x-5 rounded-md border-[1px] border-pink-700 bg-pink-900 p-3 md:p-8 md:px-12"><div className="flex aspect-square h-14 w-14 items-center justify-center rounded-full bg-pink-700">
           <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" className="text-3xl text-pink-200" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
           </div>
           <div className="flex flex-col space-y-2 w-full">
@@ -274,7 +285,7 @@ const Settings = () => {
             </p>
             </div><button type="button" onClick={onDeleteAccount} className="w-fit cursor-pointer italic text-pink-300">I want to delete my account.</button>
             </div>
-            </div>
+            </div> */}
 
 
        </div>
