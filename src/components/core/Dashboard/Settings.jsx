@@ -8,7 +8,8 @@ import {AiOutlineEye} from 'react-icons/ai'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
-
+import { setToken } from '../../../slices/authSlice';
+import { setUser } from '../../../slices/profileSilce';
 
 
 
@@ -54,6 +55,16 @@ const Settings = () => {
     }
   };
   
+  // Clear tokens and force re-login
+  const clearTokensAndReLogin = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    dispatch(setToken(null));
+    dispatch(setUser(null));
+    toast.success("Tokens cleared. Please login again.");
+    navigate('/login');
+  };
+
 
   const handleUpload = async (e) => {
     console.log("handle upload called");
@@ -228,6 +239,12 @@ const Settings = () => {
             className='mt-2 bg-blue-500 text-white px-4 py-2 rounded'
           >
             Test Authentication
+          </button>
+          <button 
+            onClick={clearTokensAndReLogin}
+            className='mt-2 bg-red-500 text-white px-4 py-2 rounded'
+          >
+            Clear Tokens & Re-Login
           </button>
         </div>
 
