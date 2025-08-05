@@ -1,26 +1,15 @@
 import { useEffect, useState } from "react"
+import { AiOutlineMenu, AiOutlineShoppingCart } from "react-icons/ai";
 import { BsChevronDown } from "react-icons/bs"
 import { useSelector } from "react-redux"
 import { Link, matchPath, useLocation } from "react-router-dom"
 import logo from "../../assets/Logo/Logo-Full-Light.png"
 import { NavbarLinks } from "../../data/navbar-links"
-import { AiOutlineShoppingCart } from "react-icons/ai";
+// import { AiOutlineShoppingCart } from "react-icons/ai";
 import { categories } from "../../services/apis";
 import ProfileDropDown from "../core/Auth/ProfileDropDown"
 import { apiConnector } from "../../services/apiconnector"
 
-
-// const subLinks = [
-//   {
-//     title:"python",
-//     link: "/catalog/pyhton"
-//   },
-
-//   {
-//     title:"web dev",
-//     link: "/catalog/web-developement"
-//   }  
-// ]
 
 
 function Navbar() {
@@ -34,11 +23,11 @@ function Navbar() {
   const fetchSubLinks = async() => {
         try{
           const result = await apiConnector("GET", categories.CATEGORIES_API);
-          console.log("printing subLinks result: ", result);
+          // console.log("printing subLinks result: ", result);
           console.log(new Date());
           
           setSubLinks(result.data.allCategory);
-          console.log("sublinks: ", result.data.allCategory);
+          // console.log("sublinks: ", result.data.allCategory);
           
 
         } catch(error) {
@@ -158,6 +147,10 @@ function Navbar() {
           {
             token !== null && <ProfileDropDown/>
           }
+
+          <button className="mr-4 md:hidden">
+                    <AiOutlineMenu fontSize={24} fill="#AFB2BF" />
+          </button>
 
 
         </div>
