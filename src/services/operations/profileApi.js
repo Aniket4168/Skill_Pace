@@ -54,7 +54,6 @@ export async function updatePfp(token,pfp){
                           settingsEndpoints.UPDATE_DISPLAY_PICTURE_API,
                           formData,
                           {
-                            "Content-Type": "multipart/form-data",
                             Authorization: `Bearer ${token}`,
                           });
     console.log("UPDATE_DISPLAY_PICTURE_API API RESPONSE............", response)

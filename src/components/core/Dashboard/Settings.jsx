@@ -48,6 +48,26 @@ const Settings = () => {
     return;
   }
 
+  // Debug token information
+  console.log("Token from Redux:", token);
+  console.log("Token type:", typeof token);
+  console.log("Token length:", token?.length);
+  console.log("Token starts with:", token?.substring(0, 20));
+  
+  // Debug localStorage token
+  const localStorageToken = localStorage.getItem("token");
+  console.log("Token from localStorage (raw):", localStorageToken);
+  
+  if (localStorageToken) {
+    try {
+      const parsedToken = JSON.parse(localStorageToken);
+      console.log("Parsed token from localStorage:", parsedToken);
+      console.log("Parsed token type:", typeof parsedToken);
+    } catch (e) {
+      console.log("Error parsing localStorage token:", e);
+    }
+  }
+
   // Create FormData and dispatch the action
   const formData = new FormData();
   formData.append('displayPicture', file);
