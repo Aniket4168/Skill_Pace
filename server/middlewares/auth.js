@@ -5,11 +5,36 @@ require("dotenv").config();
 //auth middleware
 exports.auth = async (req, res ,next) => {
     try{
+        console.log("=== AUTH MIDDLEWARE DEBUG ===");
+        console.log("Request method:", req.method);
+        console.log("Request URL:", req.url);
+        console.log("Request headers:", req.headers);
+        console.log("Request cookies:", req.cookies);
+        console.log("Request body type:", typeof req.body);
+        console.log("Request body:", req.body);
+        console.log("Request files:", req.files);
+        
         //extract token
-        const token = req.cookies.token || req.body.token || req.header("Authorization").replace("Bearer ","");
+        const cookieToken = req.cookies.token;
+        const bodyToken = req.body.token;
+        const authHeader = req.header("Authorization");
+        
+        console.log("Cookie token:", cookieToken);
+        console.log("Body token:", bodyToken);
+        console.log("Authorization header:", authHeader);
+        
+        let headerToken = null;
+        if (authHeader) {
+            headerToken = authHeader.replace("Bearer ", "");
+            console.log("Extracted header token:", headerToken);
+        }
+        
+        const token = cookieToken || bodyToken || headerToken;
+        console.log("Final token:", token);
 
         //if the token is missing
         if(!token) {
+            console.log("❌ Token is missing");
             return res.status(401).json({
                 success:false, 
                 message: "Token is missing",
@@ -18,22 +43,26 @@ exports.auth = async (req, res ,next) => {
 
         //verify the token
         try{
+            console.log("🔍 Verifying token...");
             const decode = jwt.verify(token, process.env.JWT_SECRET);
-            console.log("Decoded JWT payload:", decode);
+            console.log("✅ Decoded JWT payload:", decode);
 
             req.user = decode;
         }
         catch(error) {
             //verification me issue
+            console.log("❌ Token verification failed:", error.message);
             return res.status(401).json({
                 success:false,
                 message: "Token is invalid"
             });
         }
+        console.log("✅ Auth middleware passed");
         next();
     
 
     } catch(error) {
+        console.log("❌ Auth middleware error:", error.message);
         return res.status(401).json({
             success:false,
             message:"something went wrong while validatiing the token",

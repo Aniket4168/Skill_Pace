@@ -22,59 +22,114 @@ const Settings = () => {
   const pfp=useSelector(state=>state.profile.user?.image);
   const [profilePicture, setprofilePicture] = useState(pfp)
   const token= useSelector(state=>state.auth.token);
-  // console.log("tokennnn:   ",token);
   
-
-  const handleUpload = (e) => {
-    console.log("handle upload called");
-  e.preventDefault();
-  const fileInput = document.getElementById('upload');
-  const file = fileInput.files[0];
+  // Debug user and token state
+  console.log("Settings component - User:", user);
+  console.log("Settings component - Token:", token);
+  console.log("Settings component - PFP:", pfp);
   
-  if (!file) {
-    toast.error("Please select a file first");
-    return;
-  }
-
-  // Validate file type
-  if (!file.type.startsWith('image/')) {
-    toast.error("Please select a valid image file");
-    return;
-  }
-
-  // Validate file size (max 5MB)
-  if (file.size > 5 * 1024 * 1024) {
-    toast.error("File size should be less than 5MB");
-    return;
-  }
-
-  // Debug token information
-  console.log("Token from Redux:", token);
-  console.log("Token type:", typeof token);
-  console.log("Token length:", token?.length);
-  console.log("Token starts with:", token?.substring(0, 20));
-  
-  // Debug localStorage token
-  const localStorageToken = localStorage.getItem("token");
-  console.log("Token from localStorage (raw):", localStorageToken);
-  
-  if (localStorageToken) {
+  // Test function to verify token
+  const testAuth = async () => {
     try {
-      const parsedToken = JSON.parse(localStorageToken);
-      console.log("Parsed token from localStorage:", parsedToken);
-      console.log("Parsed token type:", typeof parsedToken);
-    } catch (e) {
-      console.log("Error parsing localStorage token:", e);
+      console.log("Testing authentication...");
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/profile/getUserDetails`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      const data = await response.json();
+      console.log("Auth test response:", data);
+      
+      if (data.success) {
+        toast.success("Authentication works!");
+      } else {
+        toast.error("Authentication failed!");
+      }
+    } catch (error) {
+      console.error("Auth test error:", error);
+      toast.error("Auth test failed");
     }
-  }
-
-  // Create FormData and dispatch the action
-  const formData = new FormData();
-  formData.append('displayPicture', file);
+  };
   
-  // Use the proper SettingsApi function with dispatch
-  dispatch(updateDisplayPicture(token, formData));
-};
+
+  const handleUpload = async (e) => {
+    console.log("handle upload called");
+    e.preventDefault();
+    const fileInput = document.getElementById('upload');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+      toast.error("Please select a file first");
+      return;
+    }
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error("Please select a valid image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File size should be less than 5MB");
+      return;
+    }
+
+    // Debug token information
+    console.log("Token from Redux:", token);
+    console.log("Token type:", typeof token);
+    console.log("Token length:", token?.length);
+    
+    // Create FormData
+    const formData = new FormData();
+    formData.append('displayPicture', file);
+    
+    // Log FormData contents
+    console.log("FormData entries:");
+    for (let pair of formData.entries()) {
+      console.log(pair[0], pair[1]);
+    }
+    
+    try {
+      const toastId = toast.loading("Uploading...");
+      
+      // Manual fetch request to isolate the issue
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/profile/updateDisplayPicture`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          // Don't set Content-Type, let browser set it with boundary
+        },
+        body: formData
+      });
+      
+      console.log("Response status:", response.status);
+      console.log("Response headers:", response.headers);
+      
+      const responseData = await response.json();
+      console.log("Response data:", responseData);
+      
+      toast.dismiss(toastId);
+      
+      if (response.ok && responseData.success) {
+        toast.success("Profile picture updated successfully!");
+        // Update the profile picture in UI
+        if (responseData.data && responseData.data.image) {
+          setprofilePicture(responseData.data.image);
+        }
+      } else {
+        console.error("Upload failed:", responseData);
+        toast.error(responseData.message || "Upload failed");
+      }
+      
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("Upload failed");
+    }
+  };
 
 
   const handleFileChange = (e) => {
@@ -162,6 +217,19 @@ const Settings = () => {
       <div className=' flex-1 overflow-auto'>
         <div className='mx-auto w-11/12 max-w-[1000px] py-10'>
         <h1 className="mb-14 text-3xl font-medium text-richblack-5">Edit Profile</h1>
+
+        {/* Debug section */}
+        <div className='mb-4 p-4 bg-richblack-700 rounded-md'>
+          <h3 className='text-white mb-2'>Debug Section</h3>
+          <p className='text-gray-300 text-sm'>User: {user ? 'Logged in' : 'Not logged in'}</p>
+          <p className='text-gray-300 text-sm'>Token: {token ? 'Present' : 'Missing'}</p>
+          <button 
+            onClick={testAuth}
+            className='mt-2 bg-blue-500 text-white px-4 py-2 rounded'
+          >
+            Test Authentication
+          </button>
+        </div>
 
         {/* update profile picture */}
         <div className='flex items-center justify-between rounded-md border-[1px] border-richblack-700 bg-richblack-800 md:p-8 md:px-12 px-3 py-3 text-richblack-5'>
