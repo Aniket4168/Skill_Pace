@@ -2,6 +2,7 @@ import React from 'react'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { updateAdditionalDetails, updatePassword, updatePfp,deleteAccount } from '../../../services/operations/profileApi'
+import { updateDisplayPicture } from '../../../services/operations/SettingsApi'
 import {AiOutlineEyeInvisible} from 'react-icons/ai'
 import {AiOutlineEye} from 'react-icons/ai'
 import { useDispatch } from 'react-redux'
@@ -35,13 +36,32 @@ const Settings = () => {
     return;
   }
 
-  updatePfp(token, file);
+  // Validate file type
+  if (!file.type.startsWith('image/')) {
+    toast.error("Please select a valid image file");
+    return;
+  }
+
+  // Validate file size (max 5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    toast.error("File size should be less than 5MB");
+    return;
+  }
+
+  // Create FormData and dispatch the action
+  const formData = new FormData();
+  formData.append('displayPicture', file);
+  
+  // Use the proper SettingsApi function with dispatch
+  dispatch(updateDisplayPicture(token, formData));
 };
 
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setprofilePicture(URL.createObjectURL(file));
+    if (file) {
+      setprofilePicture(URL.createObjectURL(file));
+    }
   }
 
 
