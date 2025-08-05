@@ -14,9 +14,9 @@ exports.auth = async (req, res ,next) => {
         console.log("Request body:", req.body);
         console.log("Request files:", req.files);
         
-        //extract token
-        const cookieToken = req.cookies.token;
-        const bodyToken = req.body.token;
+        //extract token safely
+        const cookieToken = req.cookies?.token;
+        const bodyToken = req.body?.token;
         const authHeader = req.header("Authorization");
         
         console.log("Cookie token:", cookieToken);
@@ -24,7 +24,7 @@ exports.auth = async (req, res ,next) => {
         console.log("Authorization header:", authHeader);
         
         let headerToken = null;
-        if (authHeader) {
+        if (authHeader && authHeader.startsWith("Bearer ")) {
             headerToken = authHeader.replace("Bearer ", "");
             console.log("Extracted header token:", headerToken);
         }
@@ -63,6 +63,7 @@ exports.auth = async (req, res ,next) => {
 
     } catch(error) {
         console.log("❌ Auth middleware error:", error.message);
+        console.log("Error stack:", error.stack);
         return res.status(401).json({
             success:false,
             message:"something went wrong while validatiing the token",
