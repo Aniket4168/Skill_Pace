@@ -16,14 +16,22 @@ export function updateDisplayPicture(token, formData) {
   return async (dispatch) => {
     const toastId = toast.loading("Loading...")
     try {
+      // Debug the token being sent
+      console.log("UPDATE_DISPLAY_PICTURE - Token being sent:", token);
+      console.log("UPDATE_DISPLAY_PICTURE - Token type:", typeof token);
+      console.log("UPDATE_DISPLAY_PICTURE - FormData:", formData);
+      
+      // Log the complete headers
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+      console.log("UPDATE_DISPLAY_PICTURE - Headers:", headers);
+      
       const response = await apiConnector(
         "PUT",
         UPDATE_DISPLAY_PICTURE_API,
         formData,
-        {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        }
+        headers
       )
       console.log(
         "UPDATE_DISPLAY_PICTURE_API API RESPONSE............",
@@ -37,6 +45,8 @@ export function updateDisplayPicture(token, formData) {
       dispatch(setUser(response.data.data))
     } catch (error) {
       console.log("UPDATE_DISPLAY_PICTURE_API API ERROR............", error)
+      console.log("Error response data:", error.response?.data);
+      console.log("Error status:", error.response?.status);
       toast.error("Could Not Update Display Picture")
     }
     toast.dismiss(toastId)

@@ -2,12 +2,14 @@ import React from 'react'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { updateAdditionalDetails, updatePassword, updatePfp,deleteAccount } from '../../../services/operations/profileApi'
+import { updateDisplayPicture } from '../../../services/operations/SettingsApi'
 import {AiOutlineEyeInvisible} from 'react-icons/ai'
 import {AiOutlineEye} from 'react-icons/ai'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
-
+import { setToken } from '../../../slices/authSlice';
+import { setUser } from '../../../slices/profileSilce';
 
 
 
@@ -21,27 +23,131 @@ const Settings = () => {
   const pfp=useSelector(state=>state.profile.user?.image);
   const [profilePicture, setprofilePicture] = useState(pfp)
   const token= useSelector(state=>state.auth.token);
-  // console.log("tokennnn:   ",token);
   
+  // Debug user and token state
+  console.log("Settings component - User:", user);
+  console.log("Settings component - Token:", token);
+  console.log("Settings component - PFP:", pfp);
+  
+  // Test function to verify token
+  const testAuth = async () => {
+    try {
+      console.log("Testing authentication...");
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/profile/getUserDetails`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      const data = await response.json();
+      console.log("Auth test response:", data);
+      
+      if (data.success) {
+        toast.success("Authentication works!");
+      } else {
+        toast.error("Authentication failed!");
+      }
+    } catch (error) {
+      console.error("Auth test error:", error);
+      toast.error("Auth test failed");
+    }
+  };
+  
+  // Clear tokens and force re-login
+  const clearTokensAndReLogin = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    dispatch(setToken(null));
+    dispatch(setUser(null));
+    toast.success("Tokens cleared. Please login again.");
+    navigate('/login');
+  };
 
-  const handleUpload = (e) => {
+
+  const handleUpload = async (e) => {
     console.log("handle upload called");
-  e.preventDefault();
-  const fileInput = document.getElementById('upload');
-  const file = fileInput.files[0];
-  
-  if (!file) {
-    toast.error("Please select a file first");
-    return;
-  }
+    e.preventDefault();
+    const fileInput = document.getElementById('upload');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+      toast.error("Please select a file first");
+      return;
+    }
 
-  updatePfp(token, file);
-};
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error("Please select a valid image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File size should be less than 5MB");
+      return;
+    }
+
+    // Debug token information
+    console.log("Token from Redux:", token);
+    console.log("Token type:", typeof token);
+    console.log("Token length:", token?.length);
+    
+    // Create FormData
+    const formData = new FormData();
+    formData.append('displayPicture', file);
+    
+    // Log FormData contents
+    console.log("FormData entries:");
+    for (let pair of formData.entries()) {
+      console.log(pair[0], pair[1]);
+    }
+    
+    try {
+      const toastId = toast.loading("Uploading...");
+      
+      // Manual fetch request to isolate the issue
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/profile/updateDisplayPicture`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          // Don't set Content-Type, let browser set it with boundary
+        },
+        body: formData
+      });
+      
+      console.log("Response status:", response.status);
+      console.log("Response headers:", response.headers);
+      
+      const responseData = await response.json();
+      console.log("Response data:", responseData);
+      
+      toast.dismiss(toastId);
+      
+      if (response.ok && responseData.success) {
+        toast.success("Profile picture updated successfully!");
+        // Update the profile picture in UI
+        if (responseData.data && responseData.data.image) {
+          setprofilePicture(responseData.data.image);
+        }
+      } else {
+        console.error("Upload failed:", responseData);
+        toast.error(responseData.message || "Upload failed");
+      }
+      
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("Upload failed");
+    }
+  };
 
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setprofilePicture(URL.createObjectURL(file));
+    if (file) {
+      setprofilePicture(URL.createObjectURL(file));
+    }
   }
 
 
@@ -122,6 +228,25 @@ const Settings = () => {
       <div className=' flex-1 overflow-auto'>
         <div className='mx-auto w-11/12 max-w-[1000px] py-10'>
         <h1 className="mb-14 text-3xl font-medium text-richblack-5">Edit Profile</h1>
+
+        {/* Debug section */}
+        <div className='mb-4 p-4 bg-richblack-700 rounded-md'>
+          <h3 className='text-white mb-2'>Debug Section</h3>
+          <p className='text-gray-300 text-sm'>User: {user ? 'Logged in' : 'Not logged in'}</p>
+          <p className='text-gray-300 text-sm'>Token: {token ? 'Present' : 'Missing'}</p>
+          <button 
+            onClick={testAuth}
+            className='mt-2 bg-blue-500 text-white px-4 py-2 rounded'
+          >
+            Test Authentication
+          </button>
+          <button 
+            onClick={clearTokensAndReLogin}
+            className='mt-2 bg-red-500 text-white px-4 py-2 rounded'
+          >
+            Clear Tokens & Re-Login
+          </button>
+        </div>
 
         {/* update profile picture */}
         <div className='flex items-center justify-between rounded-md border-[1px] border-richblack-700 bg-richblack-800 md:p-8 md:px-12 px-3 py-3 text-richblack-5'>
