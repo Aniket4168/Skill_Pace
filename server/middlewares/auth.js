@@ -4,10 +4,10 @@ require("dotenv").config();
 
 //auth middleware
 exports.auth = async (req, res ,next) => {
+
     try{
         //extract token
-        const token = req.cookies.token || req.body.token || req.header("Authorization").replace("Bearer ","");
-
+        const token = req.cookies?.token || req.body?.token || req.header("Authorization").replace("Bearer ","");
         //if the token is missing
         if(!token) {
             return res.status(401).json({
@@ -37,6 +37,7 @@ exports.auth = async (req, res ,next) => {
         return res.status(401).json({
             success:false,
             message:"something went wrong while validatiing the token",
+            error:error.message,
         });
     }
 }

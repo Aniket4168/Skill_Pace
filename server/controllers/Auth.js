@@ -226,10 +226,13 @@ exports.login = async (req, res) => {
             const options = {
                 expires: new Date(Date.now() + 3*24*60*60*1000),
                 httpOnly:true,
-            }
+                secure: false, // true in production with HTTPS
+                
+                path: "/"
+                        }
             res.cookie("token", token, options).status(200).json({
                 success:true,
-                token,
+                "token": token,
                 user,
                 message:"logged in successfully",
             })
@@ -269,7 +272,7 @@ exports.changePassword = async (req, res) => {
 		const userDetails = await User.findById(req.user.id);
 
         //get data from req body (old pass, new pass, confirm new pass)
-        const { oldPassword, newPassword, confirmNwePassword} = req.body;
+        const { oldPassword, newPassword, confirmNewPassword} = req.body;
         const {email } = req.user.email;
 
         //validate
@@ -293,7 +296,7 @@ exports.changePassword = async (req, res) => {
 		}
 
 
-        if(newPassword !== confirmNwePassword) {
+        if(newPassword !== confirmNewPassword) {
             return res.status(401).json({
                 success:false,
                 message:"New Passwords dont match, please check the entered new passwords",
@@ -320,7 +323,7 @@ exports.changePassword = async (req, res) => {
         //return response
         res.status(200).json({
             success:true,
-            message:"Password changed successfully"
+            message:"Password changed successfully, Please login again"
         })
 
 

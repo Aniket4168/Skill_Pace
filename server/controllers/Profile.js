@@ -6,7 +6,7 @@ const { uploadImageToCloudinary } = require("../utils/imageUploader");
 exports.updateProfile = async (req, res) => {
     try{
         //fetch data
-            const {dateOfBirth="", about="", contactNumber ,firstName,lastName, gender} = req.body;
+            let {dateOfBirth, about, contactNumber ,firstName,lastName, gender } = req.body;
 
         //get userId
             const userId = req.user.id;
@@ -30,24 +30,32 @@ exports.updateProfile = async (req, res) => {
             //we can either use create function or save funtion, both are correct
             userDetails.firstName = firstName || userDetails.firstName;
 		    userDetails.lastName = lastName || userDetails.lastName;
-            profileDetails.dateOfBirth = dateOfBirth;
-            profileDetails.about= about;
-            profileDetails.gender =gender;
-            profileDetails.contactNumber = contactNumber;
+            profileDetails.dateOfBirth = dateOfBirth || profileDetails.dateOfBirth;
+            profileDetails.about= about || profileDetails.about;
+            profileDetails.gender =gender || profileDetails.gender;
+            profileDetails.contactNumber = contactNumber || profileDetails.contactNumber;
 
             await profileDetails.save();
+            
             await userDetails.save();
+
+            const updatedDetails = {
+                ...profileDetails.toObject(),
+                image: userDetails.image,
+                firstName: userDetails.firstName,
+                lastName: userDetails.lastName
+};
 
         //return response
             return res.status(200).json({
                 success:true,
                 message:"Profile Details Updated Successfully",
-                profileDetails,
+                updatedDetails:updatedDetails,
             });
     } catch(error) {
         return res.status(500).json({
             success:false,
-            message:"Something went wring while Updating the profile",
+            message:"Something went wrong while Updating the profile",
             error:error.message,
         });
     }
